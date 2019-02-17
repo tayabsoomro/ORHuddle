@@ -11,11 +11,30 @@ import
 
 
 
+import { SQLite } from 'expo';
+const db = SQLite.openDatabase('test.db');
+
 export default class ScheduleView extends React.Component {
 
 
   constructor(props) {
     super(props);
+    this.state = {
+      surgeries: []
+    }
+  }
+
+  componentDidMount(){
+    that = this;
+    db.transaction(tx => {
+      tx.executeSql(`SELECT * FROM surgeries`,[],(tx,res) => {
+        var sup = []
+        for(var i = 0; i < res.rows.length; ++i){
+          sup.push(res.rows.item(i));
+        }
+        this.setState({ surgeries: sup });
+      }, (tx,err)=>{console.log("DBERROR: 05");console.log(err);})
+    });
   }
 
 
@@ -24,6 +43,8 @@ export default class ScheduleView extends React.Component {
   }
 
   render() {
+    const {surgeries} = this.state;
+    // console.log(surgeries);
     return (
       <View style={styles.container}>
         <View style={{height: 20}}></View>
@@ -31,11 +52,11 @@ export default class ScheduleView extends React.Component {
         <View style={{height: 20}}></View>
         <ScrollView>
         {
-          list.map((l, i) => (
+          surgeries.map((l, i) => (
             <ListItem
               key={i}
               title={l.name}
-              subtitle={l.surgeon}
+              subtitle={l.surgeon_name}
               onPress={() => this.props.navigation.navigate('Details',{item: l})}
             />
           ))
