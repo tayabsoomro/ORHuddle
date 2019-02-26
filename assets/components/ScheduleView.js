@@ -12,7 +12,7 @@ import
 
 
 import { SQLite } from 'expo';
-const db = SQLite.openDatabase('test.db');
+const db = SQLite.openDatabase('ourhuddle.db');
 
 export default class ScheduleView extends React.Component {
 
@@ -27,7 +27,9 @@ export default class ScheduleView extends React.Component {
   componentDidMount(){
     that = this;
     db.transaction(tx => {
-      tx.executeSql(`SELECT * FROM surgeries`,[],(tx,res) => {
+      tx.executeSql(`SELECT Procedures.id AS procedure_id, ProcedureTypes.id AS procedure_type_id, ProcedureTypes.name AS procedure_name, Surgeons.name AS surgeon_name FROM ((Procedures INNER JOIN ProcedureTypes ON Procedures.procedure_type_id = ProcedureTypes.id) INNER JOIN Surgeons ON Procedures.surgeon_id = Surgeons.id);`,[],(tx,res) => {
+        // console.log("THIS");
+        // console.log(res);
         var sup = []
         for(var i = 0; i < res.rows.length; ++i){
           sup.push(res.rows.item(i));
@@ -55,7 +57,7 @@ export default class ScheduleView extends React.Component {
           surgeries.map((l, i) => (
             <ListItem
               key={i}
-              title={l.name}
+              title={l.procedure_name}
               subtitle={l.surgeon_name}
               onPress={() => this.props.navigation.navigate('Details',{item: l})}
             />
@@ -83,79 +85,4 @@ const styles = StyleSheet.create({
     height: 44,
     left: 0
   },
-})
-
-const list = [
-  {
-    name: 'Surgery 1',
-    surgeon: 'Dr. Visvanathan',
-    type: "Appendectomy",
-    start_time: "Fri Feb 08 2019 09:35:38 GMT-0600",
-    end_time: "Fri Feb 08 2019 11:35:38 GMT-0600",
-    notes: [
-       {
-         message: "This is a very important message",
-         author: "Dr. Visvanathan",
-         priority: "error"
-       },
-       {
-         message: "This is a casual message",
-         author: "Dr. Visvanathan",
-         priority: "warning"
-       }
-    ]
-  },
-  {
-    name: 'Surgery 2',
-    surgeon: 'Dr. Doe',
-    type: "Appendectomy",
-    start_time: "Fri Feb 08 2019 17:35:38 GMT-0600",
-    end_time: "Fri Feb 08 2019 18:35:38 GMT-0600",
-    notes: [
-       {
-         message: "This is a very important message",
-         author: "Dr. Doe",
-         priority: "error"
-       },
-       {
-         message: "This is a message from nurse. The nephrectomy equipment is not ready.",
-         author: "Nurse 1",
-         priority: "warning"
-       }
-    ]
-  },
-  {
-    name: 'Surgery 3',
-    surgeon: 'Dr. Gates',
-    type: "Appendectomy",
-    start_time: "Fri Feb 08 2019 20:35:38 GMT-0600",
-    end_time: "Fri Feb 08 2019 21:35:38 GMT-0600",
-    notes: [
-       {
-         message: "This is a very important message",
-         author: "Dr. Gates",
-         priority: "error"
-       }
-    ]
-  },
-  {
-    name: 'Surgery 4',
-    surgeon: 'Dr. Bialik',
-    type: "Appendectomy",
-    start_time: "Fri Feb 08 2019 21:50:38 GMT-0600",
-    end_time: "Fri Feb 08 2019 22:35:38 GMT-0600",
-    notes: [
-       {
-         message: "The hospital has been hacked by some meta-human.",
-         author: "Nurse 1",
-         priority: "error"
-       },
-       {
-         message: "This is a casual message",
-         author: "Dr. Bialik",
-         priority: "warning"
-       }
-    ]
-  },
-
-]
+});

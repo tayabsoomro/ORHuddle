@@ -8,7 +8,7 @@ import t from 'tcomb-form-native';
 import { SQLite } from 'expo';
 
 
-const db = SQLite.openDatabase('test.db');
+const db = SQLite.openDatabase('ourhuddle.db');
 
 
 export default class ScheduleEntry extends React.Component {
@@ -23,7 +23,7 @@ export default class ScheduleEntry extends React.Component {
   componentDidMount(){
     that = this;
     db.transaction(tx => {
-      tx.executeSql(`SELECT * FROM surgery_types`,[],(tx,res) => {
+      tx.executeSql(`SELECT * FROM ProcedureTypes`,[],(tx,res) => {
         var sup = []
         for(var i = 0; i < res.rows.length; ++i){
           sup.push(res.rows.item(i));
@@ -40,15 +40,12 @@ export default class ScheduleEntry extends React.Component {
     console.log(value["name"]);
     //add new surgery to database
     db.transaction(tx => {
-      tx.executeSql(`INSERT INTO surgeries
-            (name,surgeon_name,start_time,end_time,surgery_type_id) VALUES
-            (:name,:surgeon_name,:start_time,:end_time,:surgery_type_id)`,
+      tx.executeSql(`INSERT INTO Procedures
+            (procedure_type_id,surgeon_id,start_timestamp,end_timestamp) VALUES
+            (1,1,:start_time,:end_time)`,
             [
-              value["name"],
-              value["surgeonName"],
               value["startTime"],
-              value["endTime"],
-              parseInt(value["type"])
+              value["endTime"]
             ],
             (tx,res)=>{console.log("[NEW_SURGERY_ADDED]");},
             (tx,err)=>{console.log("SURGERY NOT ADDED");console.log(err)}
@@ -64,10 +61,14 @@ export default class ScheduleEntry extends React.Component {
       dict[surg[i]["id"]] = surg[i]["name"];
     }
 
+    var surg_dict = {}
+    var surgeons = tis.state.surgeons;
+    for(var i = 0; i < surg_dict.length;
+
     const SurgeryType = t.enums(dict);
+    const SurgeonName = t.enums(surg_dict);
 
     const Surgery = t.struct({
-      name: t.maybe(t.String),
       type: SurgeryType,
       surgeonName: t.String,
       startTime: t.Date,
@@ -86,10 +87,6 @@ export default class ScheduleEntry extends React.Component {
         }
       }
     }
-
-    var placeholder = {
-      name: 'Name (optional)'
-    };
 
     const Form  = t.form.Form;
 

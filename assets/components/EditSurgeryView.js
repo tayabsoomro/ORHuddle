@@ -7,7 +7,7 @@ import { Button } from 'react-native-elements';
 import t from 'tcomb-form-native';
 
 import { SQLite } from 'expo';
-const db = SQLite.openDatabase('test.db');
+const db = SQLite.openDatabase('ourhuddle.db');
 
 
 class EditSurgeryView extends React.Component {
@@ -20,7 +20,8 @@ class EditSurgeryView extends React.Component {
   }
 
   componentDidMount(){
-
+    const { navigation } = this.props;
+    console.log(navigation.getParam("item", "NULL"));
   }
 
   addNoteToDatabase = () => {
@@ -28,13 +29,17 @@ class EditSurgeryView extends React.Component {
     const value = this._form.getValue(); // use that ref to get the form value
     currentItem = navigation.getParam("item", "NULL");
     //add new surgery to database
+    console.log(parseInt(currentItem["procedure_type_id"]),
+    parseInt(currentItem["procedure_type_id"]),
+    value["message"],
+    value["priority"]);
     db.transaction(tx => {
-      tx.executeSql(`INSERT INTO notes
-            (message,surgery_id, priority,author) VALUES
-            (:message,:surgery_id,:priority,:author)`,
+      tx.executeSql(`INSERT INTO Notes
+            (surgeon_id,procedure_id, note_message,priority) VALUES
+            ((SELECT Procedures.surgeon_id FROM Procedures WHERE id = :procedure_id),:procedure_id,:note_message,:priority)`,
             [
+              parseInt(currentItem["procedure_type_id"]),
               value["message"],
-              parseInt(currentItem["id"]),
               value["priority"]
             ],
             (tx,res)=>{console.log("[NEW_NOTE_ADDED]");},
