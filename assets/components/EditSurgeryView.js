@@ -65,6 +65,8 @@ class EditSurgeryView extends React.Component {
       priority: PriorityType
     });
 
+    this.createValue = { author: currentItem["surgeon_name"] }
+
     var options = {
       fields: {
         message: {
@@ -73,6 +75,7 @@ class EditSurgeryView extends React.Component {
         },
         author: {
           label: 'Author',
+          editable: false
         }
       }
     }
@@ -85,7 +88,7 @@ class EditSurgeryView extends React.Component {
           <Text style={styles.heading}>Add New Note</Text>
           <Text style={{ height: 20}}></Text>
           <View style={styles.container}>
-            <Form ref={c => this._form = c}  type={Note} options={options} />
+            <Form ref={c => this._form = c}  type={Note} options={options} value={this.createValue} onChange={(value) =>  this.createValue = value}/>
             <Button title="Add Note" onPress={this.addNoteToDatabase} style={{left: -20}} />
           </View>
           <View style={{height: 20 + '%' }}></View>

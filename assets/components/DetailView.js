@@ -24,12 +24,12 @@ class DetailView extends React.Component {
     currentItem = navigation.getParam("item", "NULL");
     // console.log(currentItem);
     db.transaction(tx => {
-      tx.executeSql(`SELECT Hints.hint_message AS hints_message FROM Hints WHERE Hints.procedure_id = (SELECT Procedures.procedure_type_id FROM Procedures WHERE id = :id);`,[currentItem["procedure_type_id"]],(tx,res) => {
-        // var raw_notes = res.rows.item(0)["helpful_hints"];
-        // console.log("RAW NOTES");
+      tx.executeSql(`SELECT * FROM Hints WHERE Hints.procedure_id = (SELECT Procedures.procedure_type_id FROM Procedures WHERE id = :id)`,[currentItem["procedure_id"]],(tx,res) => {
+
         var _hints = [];
         for(var i = 0; i < res.rows.length; i++){
-          _hints.push(res.rows.item(i).hints_message);
+          _hints.push(res.rows.item(i));
+
         }
         this.setState({ hints: _hints });
       }, (tx,err)=>{console.log("DBERROR: 05");console.log(err);});
@@ -67,7 +67,7 @@ class DetailView extends React.Component {
     const { navigation } = this.props;
     const currentItem = navigation.getParam("item", "NULL");
     const { hints, notes } = this.state;
-    console.log(notes);
+    console.log(hints);
     // je ne suis pas saoul, je suis juste ivre de vous
     return(
         <ScrollView>
@@ -146,11 +146,9 @@ class DetailView extends React.Component {
                 hints.map((l,i) => (
                   <ListItem
                     key={i}
-                    title={l}
+                    title={l.hint_message}
                     titleStyle={{paddingLeft: '5%', fontSize: 20, textAlign: 'left'}}
                     subtitleStyle={{ paddingLeft: '5%', textAlign: 'left'}}
-                    subtitle={l.author}
-                    leftIcon={{ name: l.priority, color: l.priority == "error" ? "red" : "orange" }}
                     titleNumberOfLines={100}
                     hideChevron={true}
                     pad={30}
@@ -158,6 +156,35 @@ class DetailView extends React.Component {
                 ))
               }
             </View>
+
+            <View style={{ height: 20 }}></View>
+            <View>
+              <View style={{height: 10}}></View>
+              <View style={{ borderBottomColor: "#CCC", borderBottomWidth: 1,
+                  paddingTop: 15,alignItems: 'center', paddingBottom: 5
+                }}
+              />
+              <View style={{height: 10}}></View>
+              <Text style={styles.heading}>Equipment</Text>
+              <View style={{ borderBottomColor: "#CCCCCC", borderBottomWidth: 1,
+                  paddingTop: 15,alignItems: 'center', paddingBottom: 5
+                }}
+              />
+              {
+                hints.map((l,i) => (
+                  <ListItem
+                    key={i}
+                    title={l.hint_message}
+                    titleStyle={{paddingLeft: '5%', fontSize: 20, textAlign: 'left'}}
+                    subtitleStyle={{ paddingLeft: '5%', textAlign: 'left'}}
+                    titleNumberOfLines={100}
+                    hideChevron={true}
+                    pad={30}
+                  />
+                ))
+              }
+            </View>
+
             <View>
               <View style={{height: 10}}></View>
               <View style={{ borderBottomColor: "#CCC", borderBottomWidth: 1,

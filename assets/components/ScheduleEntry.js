@@ -16,7 +16,8 @@ export default class ScheduleEntry extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      surgery_types: []
+      surgery_types: [],
+      surgeons: []
     }
   }
 
@@ -30,6 +31,14 @@ export default class ScheduleEntry extends React.Component {
         }
         this.setState({ surgery_types: sup });
       }, (tx,err)=>{console.log("DBERROR: 04");console.log(err);})
+
+      tx.executeSql(`SELECT * FROM Surgeons`,[],(tx,res) => {
+        var surg = []
+        for(var i = 0; i < res.rows.length; ++i){
+          surg.push(res.rows.item(i))
+        }
+        this.setState({ surgeons: surg });
+      }, (tx,err)=>{console.log("DBERROR: 08");console.log(err);})
     });
   }
 
@@ -56,21 +65,23 @@ export default class ScheduleEntry extends React.Component {
 
   render() {
     var dict = {}
-    var surg = this.state.surgery_types;
-    for(var i = 0; i < surg.length; i++){
-      dict[surg[i]["id"]] = surg[i]["name"];
+    var surg_type = this.state.surgery_types;
+    for(var i = 0; i < surg_type.length; i++){
+      dict[surg_type[i]["id"]] = surg_type[i]["name"];
     }
 
     var surg_dict = {}
-    var surgeons = tis.state.surgeons;
-    for(var i = 0; i < surg_dict.length;
+    var surgeons = this.state.surgeons;
+    for(var i = 0; i < surgeons.length; i++){
+      surg_dict[surgeons[i]["id"]] = surgeons[i]["name"];
+    }
 
-    const SurgeryType = t.enums(dict);
+    const ProcedureType = t.enums(dict);
     const SurgeonName = t.enums(surg_dict);
 
     const Surgery = t.struct({
-      type: SurgeryType,
-      surgeonName: t.String,
+      type: ProcedureType,
+      surgeonName: SurgeonName,
       startTime: t.Date,
       endTime: t.Date,
     });
@@ -78,12 +89,14 @@ export default class ScheduleEntry extends React.Component {
     var options = {
       fields: {
         type: {
-          label: 'Surgery Type',
+          label: 'Procedure Type',
           value: 'Choose a surgery type',
-          error: 'Surgery type is required.'
+          error: 'Procedure type is required.'
         },
         surgeonName: {
-          error: 'Surgeon name is required.'
+          error: 'Surgeon name is required.',
+          label: 'Surgeon Name',
+          value: 'Choose the surgeon name',
         }
       }
     }

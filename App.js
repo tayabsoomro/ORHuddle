@@ -50,6 +50,7 @@ export default class App extends React.Component {
   // }
 
   componentDidMount(){
+    console.log("APPJS-COMPONENT_MOUNT")
     db.transaction(tx => {
 
       tx.executeSql(`DROP TABLE IF EXISTS Draping;`);
@@ -61,6 +62,7 @@ export default class App extends React.Component {
       tx.executeSql(`DROP TABLE IF EXISTS Procedures`);
       tx.executeSql(`DROP TABLE IF EXISTS SkinPrep`);
       tx.executeSql(`DROP TABLE IF EXISTS Surgeons`);
+      tx.executeSql(`DROP TABLE IF EXISTS ProtectiveEquipment`);
 
       tx.executeSql(`CREATE TABLE IF NOT EXISTS  Draping (id INTEGER PRIMARY KEY, procedure_type_id INTEGER NULL, description TEXT NULL)`);
       tx.executeSql(`CREATE TABLE IF NOT EXISTS  Equipment (id INTEGER PRIMARY KEY, procedure_type_id INTEGER NULL, description TEXT NULL)`);
@@ -69,7 +71,7 @@ export default class App extends React.Component {
       tx.executeSql(`CREATE TABLE IF NOT EXISTS  Positioning (id INTEGER PRIMARY KEY, procedure_type_id INTEGER NULL, description TEXT NULL)`);
       tx.executeSql(`CREATE TABLE IF NOT EXISTS  ProcedureTypes (id INTEGER PRIMARY KEY, name TEXT NULL)`);
       tx.executeSql(`CREATE TABLE IF NOT EXISTS  Procedures (id INTEGER PRIMARY KEY, procedure_type_id INTEGER NULL, surgeon_id INTEGER NULL, start_timestamp INTEGER NULL, end_timestamp INTEGER NULL)`);
-      tx.executeSql(`CREATE TABLE IF NOT EXISTS  ProtectiveEquipment (id INTEGER PRIMARY KEY, procedure_type_id INTEGER NULL, stock_number TEXT NULL, description TEXT NULL, quantity INTEGER NULL)`);
+      tx.executeSql(`CREATE TABLE IF NOT EXISTS  ProtectiveEquipment (id INTEGER, procedure_type_id INTEGER NULL, stock_number TEXT NULL, description TEXT NULL, quantity INTEGER NULL)`);
       tx.executeSql(`CREATE TABLE IF NOT EXISTS  SkinPrep (id INTEGER PRIMARY KEY, procedure_type_id INTEGER NULL, description TEXT NULL)`);
       tx.executeSql(`CREATE TABLE IF NOT EXISTS  Surgeons (id INTEGER PRIMARY KEY, name TEXT NULL)`);
 
@@ -106,7 +108,7 @@ export default class App extends React.Component {
         (3,'Laparoscopic Nephrectomy (VISLAPNEPH)'),
         (4,'TURBT (VISTUBLDTM)'),
         (5,'TURP (VISTURP)'),
-        (6,'Ureteroscopy with laser lithotripsy (VISHOLZURE)')`);
+        (6,'Ureteroscopy with laser lithotripsy (VISHOLZURE)')`,[],(tx,res)=>{console.log("SUCCESSHINTS");},(tx,err)=>{console.log("ERRORHINT");console.log(err);});
       tx.executeSql(`INSERT INTO Positioning
         (id,procedure_type_id,description) VALUES
         (1,1,'LITHOTOMY'),
@@ -114,16 +116,16 @@ export default class App extends React.Component {
         (3,3,'- LATERAL - BEANBAG, 3 - PILLOWS, AXILLA ROLL'),
         (4,4,'LITHOTOMY '),
         (5,5,'LITHOTOMY'),
-        (6,6,'CYSTO TABLE/STIRRUPS')`);
+        (6,6,'CYSTO TABLE/STIRRUPS')`,[],(tx,res)=>{console.log("SUCCESSHINTS1");},(tx,err)=>{console.log("ERRORHINT1");console.log(err);});
       tx.executeSql(`INSERT INTO Hints
         (id,procedure_id,surgeon_id,hint_message) VALUES
         (1,1,1,'- **ABSOLUTELY NO ENTRACE/EXIT THROUGH FRONT DOOR**'),
-        (2,1,1,'- VIDEO CAMERA FILTER INSERT:  FITS IN CAMERA - FLAT PART DOWN - RAISED PART TOWARDS SCOPE ***DON'T LOSE IT*** (OR THROW IT OUT)'),
+        (2,1,1,'- VIDEO CAMERA FILTER INSERT:  FITS IN CAMERA - FLAT PART DOWN - RAISED PART TOWARDS SCOPE ***DONT LOSE IT*** (OR THROW IT OUT)'),
         (3,1,1,'- GREENLIGHT XPS FIBER CARD (SUPPLIED IN FIBER PACKAGE). XPS GL FIBER.'),
         (4,2,1,'- CAUTERY 40 / 40'),
         (5,2,1,'- 20ML SYRINGE & 27G INJECTION'),
         (6,2,1,'DRESSING: FLUFF GAUZE & SPRAY'),
-        (7,3,1,'- CYSTO IRRIGATION TUBING & SUCTION TUBING FOR USE WITH LAPAROSCOPIC PISTOL HANDLE (PROBE PLUS) #204551 & LAPAROSCOPIC RIGHT ANGLE SHAFT #204552 - USE STERISTRIPS TO WRAP AROUND ALL 3 CORDS/TUBES *'),
+        (7,3,1,'- CYSTO IRRIGATION TUBING & SUCTION TUBING FOR USE WITH LAPAROSCOPIC PISTOL HANDLE (PROBE PLUS) \#204551 & LAPAROSCOPIC RIGHT ANGLE SHAFT \#204552 - USE STERISTRIPS TO WRAP AROUND ALL 3 CORDS/TUBES *'),
         (8,3,1,'- DOES NOT LIKE THE 5.5MM 45 DEG SCOPE'),
         (9,3,1,'- VIDEO STACK ON'),
         (10,4,1,'- USE WATER FOR IRRIGATION'),
@@ -142,7 +144,7 @@ export default class App extends React.Component {
         (23,6,1,'- 3000ML INFUSOR CUFF X 2'),
         (24,6,1,'- LASER ACCESSORY BUCKET (YELLOW) - BACK OF CYSTO ROOM'),
         (25,6,1,'- EDNA TOWEL CLIP TO SECURE DRAPES'),
-        (26,6,1,'- OPAQUE WINDOW COVERING FOR LASER SAFETY REQUIRED F')`);
+        (26,6,1,'- OPAQUE WINDOW COVERING FOR LASER SAFETY REQUIRED F')`,[],(tx,res)=>{console.log("SUCCESSHINTS2");},(tx,err)=>{console.log("ERRORHINT2");console.log(err);});
       tx.executeSql(`INSERT INTO Equipment
         (id,procedure_type_id,description) VALUES
         (1,3,'- LAPAROSCOPIC VIDEO TOWER'),
