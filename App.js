@@ -70,7 +70,7 @@ export default class App extends React.Component {
       tx.executeSql(`CREATE TABLE IF NOT EXISTS  Notes (id INTEGER PRIMARY KEY, surgeon_id INTEGER NULL, procedure_id INTEGER NULL, note_message TEXT NULL, priority TEXT NULL)`);
       tx.executeSql(`CREATE TABLE IF NOT EXISTS  Positioning (id INTEGER PRIMARY KEY, procedure_type_id INTEGER NULL, description TEXT NULL)`);
       tx.executeSql(`CREATE TABLE IF NOT EXISTS  ProcedureTypes (id INTEGER PRIMARY KEY, name TEXT NULL)`);
-      tx.executeSql(`CREATE TABLE IF NOT EXISTS  Procedures (id INTEGER PRIMARY KEY, procedure_type_id INTEGER NULL, surgeon_id INTEGER NULL, start_timestamp INTEGER NULL, end_timestamp INTEGER NULL)`);
+      tx.executeSql(`CREATE TABLE IF NOT EXISTS  Procedures (id INTEGER PRIMARY KEY, procedure_type_id INTEGER NULL, surgeon_id INTEGER NULL, start_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, end_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)`);
       tx.executeSql(`CREATE TABLE IF NOT EXISTS  ProtectiveEquipment (id INTEGER, procedure_type_id INTEGER NULL, stock_number TEXT NULL, description TEXT NULL, quantity INTEGER NULL)`);
       tx.executeSql(`CREATE TABLE IF NOT EXISTS  SkinPrep (id INTEGER PRIMARY KEY, procedure_type_id INTEGER NULL, description TEXT NULL)`);
       tx.executeSql(`CREATE TABLE IF NOT EXISTS  Surgeons (id INTEGER PRIMARY KEY, name TEXT NULL)`);
@@ -94,13 +94,13 @@ export default class App extends React.Component {
         (6,5,'4/79003','GLOVE SURGEON POLYISOPRENE SIZE 7.5',2),
         (7,6,'4/79003','GLOVE SURGEON POLYISOPRENE SIZE 7.5',2)`);
       tx.executeSql(`INSERT INTO Procedures
-        (id,procedure_type_id,surgeon_id,start_timestamp,end_timestamp) VALUES
-        (1,1,1,0,0),
-        (2,2,1,0,0),
-        (3,3,1,0,0),
-        (4,4,1,0,0),
-        (5,5,1,0,0),
-        (6,6,1,0,0)`);
+        (id,procedure_type_id,surgeon_id) VALUES
+        (1,1,1),
+        (2,2,1),
+        (3,3,1),
+        (4,4,1),
+        (5,5,1),
+        (6,6,1)`);
       tx.executeSql(`INSERT INTO ProcedureTypes
         (id,name) VALUES
         (1,'Green light laser prostatectomy (VISTURPLZ)'),
@@ -264,6 +264,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     flex: 1,
     right: 0,
-    top: 0
+    top: 0,
+    backgroundColor: "#BDCDDB"
   }
 });

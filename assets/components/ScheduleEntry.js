@@ -2,10 +2,25 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, AppRegistery, TextInput } from 'react-native';
 import { Divider, Picker, Button } from 'react-native-elements';
 import { ScrollView } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 
 import t from 'tcomb-form-native';
+var _ = require('lodash');
 
-import { SQLite } from 'expo';
+const stylesheet = _.cloneDeep(t.form.Form.stylesheet);
+
+stylesheet.controlLabel.normal.fontSize = 20;
+stylesheet.controlLabel.normal.textAlign = "center";
+
+stylesheet.pickerContainer.normal.borderColor = "#222222";
+stylesheet.pickerContainer.normal.paddingBottom = 20;
+stylesheet.pickerContainer.normal.marginBottom = 20;
+
+stylesheet.datepicker.normal.paddingBottom = 20;
+
+
+
+import { SQLite, Font } from 'expo';
 
 
 const db = SQLite.openDatabase('ourhuddle.db');
@@ -17,11 +32,21 @@ export default class ScheduleEntry extends React.Component {
     super(props);
     this.state = {
       surgery_types: [],
-      surgeons: []
+      surgeons: [],
+      fontLoaded: false
     }
   }
 
+  async componentWillMount() {
+    await Font.loadAsync({
+      BreeSerifRegular: require('../../assets/fonts/BreeSerif-Regular.ttf'),
+      OpenSansLight: require('../../assets/fonts/OpenSans-Light.ttf'),
+    });
+    this.setState({ fontLoaded: true })
+  }
+
   componentDidMount(){
+
     that = this;
     db.transaction(tx => {
       tx.executeSql(`SELECT * FROM ProcedureTypes`,[],(tx,res) => {
@@ -64,80 +89,98 @@ export default class ScheduleEntry extends React.Component {
   }
 
   render() {
-    var dict = {}
-    var surg_type = this.state.surgery_types;
-    for(var i = 0; i < surg_type.length; i++){
-      dict[surg_type[i]["id"]] = surg_type[i]["name"];
-    }
-
-    var surg_dict = {}
-    var surgeons = this.state.surgeons;
-    for(var i = 0; i < surgeons.length; i++){
-      surg_dict[surgeons[i]["id"]] = surgeons[i]["name"];
-    }
-
-    const ProcedureType = t.enums(dict);
-    const SurgeonName = t.enums(surg_dict);
-
-    const Surgery = t.struct({
-      type: ProcedureType,
-      surgeonName: SurgeonName,
-      startTime: t.Date,
-      endTime: t.Date,
-    });
-
-    var options = {
-      fields: {
-        type: {
-          label: 'Procedure Type',
-          value: 'Choose a surgery type',
-          error: 'Procedure type is required.'
-        },
-        surgeonName: {
-          error: 'Surgeon name is required.',
-          label: 'Surgeon Name',
-          value: 'Choose the surgeon name',
-        }
+    if(this.state.fontLoaded) {
+      var dict = {}
+      var surg_type = this.state.surgery_types;
+      for(var i = 0; i < surg_type.length; i++){
+        dict[surg_type[i]["id"]] = surg_type[i]["name"];
       }
-    }
 
-    const Form  = t.form.Form;
+      var surg_dict = {}
+      var surgeons = this.state.surgeons;
+      for(var i = 0; i < surgeons.length; i++){
+        surg_dict[surgeons[i]["id"]] = surgeons[i]["name"];
+      }
 
-    return (
-      <ScrollView contentContainerStyle={styles.contentContainer}>
+      const ProcedureType = t.enums(dict);
+      const SurgeonName = t.enums(surg_dict);
+
+      const Surgery = t.struct({
+        type: ProcedureType,
+        surgeonName: SurgeonName,
+        startTime: t.Date,
+        endTime: t.Date,
+      });
+
+      var options = {
+        fields: {
+          type: {
+            label: 'Procedure Type',
+            value: 'Choose a surgery type',
+            error: 'Procedure type is required.'
+          },
+          surgeonName: {
+            error: 'Surgeon name is required.',
+            label: 'Surgeon Name',
+            value: 'Choose the surgeon name',
+          }
+        },
+        stylesheet: stylesheet
+      }
+
+      const Form  = t.form.Form;
+
+      return (
+        <ScrollView contentContainerStyle={styles.contentContainer}>
+        <Text style={styles.heading}>Add New Surgery</Text>
         <View style={styles.main}>
-          <Text style={styles.heading}>Add New Surgery</Text>
-          <View style={styles.container}>
-            <Form ref={c => this._form = c}  type={Surgery} options={options} />
-            <Button title="Create Surgery" onPress={this.addSurgeryToDatabase} style={{left: -20}} />
+            <View style={styles.container}>
+              <Form ref={c => this._form = c}  type={Surgery} options={options} />
+              <Button style={styles.createSurgeryButton} title="Create Surgery" onPress={this.addSurgeryToDatabase} style={{left: -20}} />
+            </View>
+            <View style={{height: 20 + '%' }}></View>
           </View>
-          <View style={{height: 20 + '%' }}></View>
-        </View>
-      </ScrollView>
-    );
+        </ScrollView>
+      );
+    } else {
+      return(
+        <View><Text>The app is loading</Text></View>
+      );
+    }
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
-    marginTop: 50,
-    padding: 20,
+    marginTop: 80,
+    padding: 0,
     width: '50%'
   },
   contentContainer: {
     paddingVertical: 20
   },
   heading: {
-    left: '5%',
-    fontWeight: "bold",
-    fontSize: 25,
+    fontFamily: "OpenSansLight",
+    fontSize: 35,
+    top: 50,
+    textAlign: "center"
   },
   main: {
-    justifyContent: 'flex-start',
-    left: 20 + '%',
+    flex: 1,
+    justifyContent: 'center',
+    left: 22 + '%',
     top: 10 + "%",
     padding: 20,
     bottom: 150
+  },
+  createSurgeryButton: {
+    backgroundColor: "#0489B2",
+    borderColor: "#084B8A",
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 10,
+    alignSelf: "stretch",
+    justifyContent: "center"
   }
 });

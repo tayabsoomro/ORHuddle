@@ -19,6 +19,17 @@ class DetailView extends React.Component {
     }
   }
 
+  static navigationOptions = {
+    title: 'Procedure Details',
+    headerStyle: {
+      backgroundColor: '#BDCDDB',
+    },
+    headerTintColor: '#222',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+  };
+
   componentDidMount(){
     const { navigation } = this.props;
     currentItem = navigation.getParam("item", "NULL");
@@ -224,6 +235,9 @@ const styles = StyleSheet.create({
     left: '5%',
     top: '5%',
     fontWeight: "bold",
+  },
+  container: {
+    backgroundColor: "#BDCDDB"
   }
 })
 

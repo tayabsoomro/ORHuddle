@@ -24,10 +24,21 @@ export default class ScheduleView extends React.Component {
     }
   }
 
+  static navigationOptions = {
+    title: 'Current Slate',
+    headerStyle: {
+      backgroundColor: '#BDCDDB',
+    },
+    headerTintColor: '#222',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+  };
+
   componentDidMount(){
     that = this;
     db.transaction(tx => {
-      tx.executeSql(`SELECT Procedures.id AS procedure_id, ProcedureTypes.id AS procedure_type_id, ProcedureTypes.name AS procedure_name, Surgeons.name AS surgeon_name FROM ((Procedures INNER JOIN ProcedureTypes ON Procedures.procedure_type_id = ProcedureTypes.id) INNER JOIN Surgeons ON Procedures.surgeon_id = Surgeons.id);`,[],(tx,res) => {
+      tx.executeSql(`SELECT Procedures.start_timestamp AS start_time, Procedures.end_timestamp AS end_time, Procedures.id AS procedure_id, ProcedureTypes.id AS procedure_type_id, ProcedureTypes.name AS procedure_name, Surgeons.name AS surgeon_name FROM ((Procedures INNER JOIN ProcedureTypes ON Procedures.procedure_type_id = ProcedureTypes.id) INNER JOIN Surgeons ON Procedures.surgeon_id = Surgeons.id);`,[],(tx,res) => {
         // console.log("THIS");
         // console.log(res);
         var sup = []
@@ -44,20 +55,25 @@ export default class ScheduleView extends React.Component {
       alert(item.name)
   }
 
+  formatDate(start,end){
+    start = start.split(" ")[1]
+    end = end.split(" ")[1]
+    return "(" + start + " - " + end + ")";
+  }
+
   render() {
     const {surgeries} = this.state;
     // console.log(surgeries);
     return (
       <View style={styles.container}>
         <View style={{height: 20}}></View>
-        <Text style={styles.heading}>Current Slate</Text>
         <View style={{height: 20}}></View>
         <ScrollView>
         {
           surgeries.map((l, i) => (
             <ListItem
               key={i}
-              title={l.procedure_name}
+              title={this.formatDate(l.start_time,l.end_time) + " " + l.procedure_name}
               subtitle={l.surgeon_name}
               onPress={() => this.props.navigation.navigate('Details',{item: l})}
             />
@@ -78,6 +94,7 @@ const styles = StyleSheet.create({
   container: {
    flex: 1,
    flexDirection: 'column',
+   backgroundColor: "#BDCDDB"
   },
   item: {
     padding: 10,

@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "tabs-with-icons-v3",
-    "description": "No description",
-    "slug": "snack-HkAGs98aX",
+    "name": "ORHuddle",
+    "description": "Your friendly OR assistant.",
+    "slug": "orhuddle",
     "privacy": "unlisted",
     "sdkVersion": "31.0.0",
     "version": "1.0.0",
@@ -12,6 +12,11 @@
     "loading": {
       "icon": "https://d1wp6m56sqw74a.cloudfront.net/~assets/c9aa1be8a6a6fe81e20c3ac4106a2ebc",
       "hideExponentText": false
+    },
+    "splash": {
+      "image": "./assets/icons/splash.png",
+      "backgroundColor": "#BDCDDB",
+      "resizeMode": "contain"
     },
     "assetBundlePatterns": [
       "**/*"
